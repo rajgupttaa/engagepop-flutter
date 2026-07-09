@@ -2,7 +2,7 @@ name: engagepop
 description: EngagePop Flutter SDK — native push notifications and in-app messages.
 version: 0.1.0
 homepage: https://engagepop.com
-repository: https://github.com/engagepop/engagepop-flutter
+repository: https://github.com/rajgupttaa/engagepop-flutter
 
 environment:
   sdk: ">=2.17.0 <4.0.0"
