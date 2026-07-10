@@ -33,6 +33,24 @@ EngagePop.deepLinks.listen((url) {
 await EngagePop.refreshInAppMessages();
 ```
 
+## Notification inbox / bell
+
+```dart
+final messages = await EngagePop.getInbox();   // newest first
+final unread   = await EngagePop.unreadCount(); // bind to a badge
+
+await EngagePop.markRead(message.id);
+await EngagePop.markAllRead();
+await EngagePop.clearInbox();
+
+// Refresh your bell when it changes:
+EngagePop.inboxChanges.listen((_) { /* reload */ });
+```
+
+To control where/when in-app popups appear, pass
+`autoShowInAppMessages: false` to `configure` and call
+`EngagePop.refreshInAppMessages()` on the screens where a popup is appropriate.
+
 ## Native glue
 
 Same small wiring as any push plugin:

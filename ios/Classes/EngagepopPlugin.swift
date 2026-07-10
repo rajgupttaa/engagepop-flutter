@@ -5,6 +5,7 @@ import EngagePop
 /// Flutter bridge over the native EngagePop iOS SDK.
 public class EngagepopPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     private var deepLinkSink: FlutterEventSink?
+    private let inboxStream = EngagePopStreamHandler()
 
     public static func register(with registrar: FlutterPluginRegistrar) {
         let instance = EngagepopPlugin()
@@ -12,6 +13,8 @@ public class EngagepopPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
         registrar.addMethodCallDelegate(instance, channel: channel)
         let events = FlutterEventChannel(name: "engagepop/deeplinks", binaryMessenger: registrar.messenger())
         events.setStreamHandler(instance)
+        let inbox = FlutterEventChannel(name: "engagepop/inbox", binaryMessenger: registrar.messenger())
+        inbox.setStreamHandler(instance.inboxStream)
     }
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -39,6 +42,26 @@ public class EngagepopPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
         case "refreshInAppMessages":
             EngagePop.refreshInAppMessages()
             result(nil)
+        case "getInbox":
+            let messages = EngagePop.shared.inbox?.messages ?? []
+            result(messages.map { [
+                "id": $0.id, "title": $0.title, "body": $0.body,
+                "url": $0.url as Any, "receivedAt": $0.receivedAt.timeIntervalSince1970, "read": $0.read,
+            ] })
+        case "unreadCount":
+            result(EngagePop.shared.inbox?.unreadCount ?? 0)
+        case "markRead":
+            if let id = args["id"] as? String { EngagePop.shared.inbox?.markRead(id) }
+            result(nil)
+        case "markAllRead":
+            EngagePop.shared.inbox?.markAllRead()
+            result(nil)
+        case "removeMessage":
+            if let id = args["id"] as? String { EngagePop.shared.inbox?.remove(id) }
+            result(nil)
+        case "clearInbox":
+            EngagePop.shared.inbox?.clear()
+            result(nil)
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -50,10 +73,16 @@ public class EngagepopPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
         let base = (args["apiBaseUrl"] as? String).flatMap { URL(string: $0) }
             ?? URL(string: "https://edge.engagepop.com")!
         let debug = args["debugLogging"] as? Bool ?? false
-        EngagePop.configure(EngagePopConfig(siteKey: site, appKey: app, apiBaseURL: base, debugLogging: debug))
+        let autoShow = args["autoShowInAppMessages"] as? Bool ?? true
+        EngagePop.configure(EngagePopConfig(
+            siteKey: site, appKey: app, apiBaseURL: base, debugLogging: debug, autoShowInAppMessages: autoShow
+        ))
         EngagePop.shared.deepLinkHandler = { [weak self] url in
             self?.deepLinkSink?(url.absoluteString)
         }
+        NotificationCenter.default.addObserver(
+            forName: Inbox.didChangeNotification, object: nil, queue: .main
+        ) { [weak self] _ in self?.inboxStream.sink?(nil) }
     }
 
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -63,6 +92,20 @@ public class EngagepopPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
 
     public func onCancel(withArguments arguments: Any?) -> FlutterError? {
         deepLinkSink = nil
+        return nil
+    }
+}
+
+/// A tiny stream handler that just holds a sink — used for the inbox-change
+/// event channel (the plugin itself handles the deep-link channel).
+final class EngagePopStreamHandler: NSObject, FlutterStreamHandler {
+    var sink: FlutterEventSink?
+    func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+        sink = events
+        return nil
+    }
+    func onCancel(withArguments arguments: Any?) -> FlutterError? {
+        sink = nil
         return nil
     }
 }
