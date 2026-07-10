@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'engagepop'
-  s.version          = '0.2.1'
+  s.version          = '0.2.2'
   s.summary          = 'EngagePop Flutter SDK — native push and in-app messages.'
   s.homepage         = 'https://engagepop.com'
   s.license          = { :type => 'MIT' }
