@@ -7,7 +7,7 @@ the native EngagePop iOS + Android SDKs via platform channels.
 
 ```yaml
 dependencies:
-  engagepop: ^0.2.4
+  engagepop: ^0.2.5
 ```
 
 Platform prerequisites: **iOS** — Push Notifications capability; **Android** —
@@ -58,7 +58,7 @@ Attributes passed to `identify()` drive targeting across EngagePop:
 - **Push audience filters** — in the dashboard push composer, add a filter like
   `plan is Pro`: the notification only reaches devices whose identify
   attributes match every filter.
-- **Popup "User attribute" conditions** *(0.2.4+)* — popup campaigns can target
+- **Popup "User attribute" conditions** *(0.2.5+)* — popup campaigns can target
   the same attributes (e.g. show an offer only when `plan is Pro`). Older SDK
   versions skip the condition, so update before gating exclusive content on it.
 - **`{{merge tags}}`** in popups.
