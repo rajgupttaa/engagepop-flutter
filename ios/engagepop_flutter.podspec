@@ -1,5 +1,5 @@
 Pod::Spec.new do |s|
-  s.name             = 'engagepop'
+  s.name             = 'engagepop_flutter'
   s.version          = '0.2.5'
   s.summary          = 'EngagePop Flutter SDK — native push and in-app messages.'
   s.homepage         = 'https://engagepop.com'

@@ -1,4 +1,4 @@
-# engagepop (Flutter)
+# engagepop_flutter
 
 EngagePop for Flutter — native push notifications and in-app messages, bridging
 the native EngagePop iOS + Android SDKs via platform channels.
@@ -7,7 +7,7 @@ the native EngagePop iOS + Android SDKs via platform channels.
 
 ```yaml
 dependencies:
-  engagepop: ^0.2.5
+  engagepop_flutter: ^0.2.5
 ```
 
 Platform prerequisites: **iOS** — Push Notifications capability; **Android** —
@@ -16,7 +16,7 @@ Firebase (`google-services.json` + the Google Services plugin).
 ## Usage
 
 ```dart
-import 'package:engagepop/engagepop.dart';
+import 'package:engagepop_flutter/engagepop.dart';
 
 await EngagePop.configure('ep_…', 'epm_…');
 
