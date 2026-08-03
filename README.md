@@ -16,7 +16,7 @@ Firebase (`google-services.json` + the Google Services plugin).
 ## Usage
 
 ```dart
-import 'package:engagepop_flutter/engagepop.dart';
+import 'package:engagepop_flutter/engagepop_flutter.dart';
 
 await EngagePop.configure('ep_…', 'epm_…');
 
